@@ -35,14 +35,3 @@ class reader():
             num+=1
         amountNum.append(doc[len(doc)-1])
         return amountNum
-
-
-x=reader.getAsin("DEN3-Adams 12 Five Star Schools-Donations-08_18_2022.docx")
-print(x)
-
-
-
-
-
-
-
