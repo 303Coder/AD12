@@ -6,15 +6,11 @@ class reader():
         #sets the words from the docx file to the variable doc
         doc=d2t.process(path)
         num=0
-
-
         #goes through all the characters in variable doc to check if there is "\n" followed up by "B0" and appends the next 10 charecters to the list asinNum
         for x in doc:
-            
             x = doc[num:num+2]
             if x=='B0' and doc[num-1:num]=='\n':
                 asinNum.append(doc[num:num+10])
-
             num+=1
         return asinNum
     def getAmount(path):
