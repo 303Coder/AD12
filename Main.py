@@ -1,49 +1,70 @@
-import webScrapper
 from reader import reader
-from datetime import datetime
+import requests
+import json
 import time
 
 
+path = "C:/Users/tyrei/Downloads/AD12/Data.txt"
 
-# path = "D:\Data.txt"
+ASIN = reader.store("ASIN", path)
+Quantity = reader.store("Quantity", path)
+
+totalPrice = 0
 
 
-# ASIN = reader.store("ASIN", path)
-# Quantity = reader.store("Quantity", path)
+# set up the request parameters
+def find(ASIN):
 
-ASIN = ["B00000J0S3", "B00004YV1W", "B00005BZRZ", "B00005BZRZ", "B000067NXE"]
-Quantity = ["1", "4", "1", "1", "1"]
+# API Parameters using individual ASIN #'s
+    params = {
+    'api_key': '59E6E09CB64F45719F983ED62F73FE9B',
+    'type': 'offers',
+    'amazon_domain': 'amazon.com',
+    'asin': ASIN,
+    'customer_zipcode': '80602',
+    'output': 'json',
+    'include_html': 'false'
+    }
 
-Total = 0
 
-count = 0
 
-startTime = datetime.now()
+    # make the http GET request to Rainforest API
+    api_result = requests.get('https://api.rainforestapi.com/request', params)
 
-for item in ASIN:
-    webScrapper.initialize(item)
-    price = webScrapper.find()
 
-    if price != None:
-        length = len(price)
-        price = price[1:length]
-        price = float(price)
+    # Store the JSON response from Rainforest API
+    data = json.dumps(api_result.json())
+    #print(data)
 
-        Q = int(Quantity[count])
-        Total += price * Q
+    #Find the first instance of "value" in the JSON response to get the price
+    index_of_value = data.find("value")
+    #print(index_of_value)
+    #print(data[index_of_value:index_of_value+15])
+
+
+    price = ""
+
+    # Traverse each character of the string from index of "value" and the following 15 characters including full price
+    for x in data[index_of_value:index_of_value+15]:
+        # find the numbers from the string and store into a variable to return final price
+        if x.isnumeric() or x ==".":
+            price += x
+
+
+    print(f"ASIN: {ASIN}\nIndex of 'value': {index_of_value}\n15 Character string including price: {data[index_of_value:index_of_value+15]}\nPrice: {price}\n\n")
+    return float(price)
+
+
+
     
-    #print(count)
-    count += 1
 
-endTime = datetime.now()
+totalPrice = 0
 
+for x in range(20):
 
-print("$" + str(Total))
-print(webScrapper.returnErrors())
-print(endTime-startTime)
+    totalPrice += find(ASIN[x])
+    time.sleep(1)
 
 
 
-x = open("Efficiency.txt", "a")
-x.write(f"\n ${str(Total)} \n {webScrapper.returnErrors} \n {endTime-startTime}")
-x.close()
+print(totalPrice)
