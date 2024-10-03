@@ -1,16 +1,4 @@
 import docx2txt as d2t
-json="laksjdflkj:lksdfjjlskdjfsdvalue:14.30 dfasdflksjdlfk"
-num=0
-list=[]
-for x in json:
-    x= json[num:num+5]
-    if x =="value":
-        num2=num+6
-        while json[num2:num2+1].isnumeric() or json[num2:num2+1] ==".":
-            num2+=1
-        list.append(json[num+6:num2])
-    num+=1
-print(list)
 class reader():
     def getAsin(path):
     
