@@ -1,70 +1,100 @@
+import PriceAPI
 from reader import reader
-import requests
-import json
+import reader2
 import time
 
-
-path = "C:/Users/tyrei/Downloads/AD12/Data.txt"
-
-ASIN = reader.store("ASIN", path)
-Quantity = reader.store("Quantity", path)
-
-totalPrice = 0
-
-
-# set up the request parameters
-def find(ASIN):
-
-# API Parameters using individual ASIN #'s
-    params = {
-    'api_key': '59E6E09CB64F45719F983ED62F73FE9B',
-    'type': 'offers',
-    'amazon_domain': 'amazon.com',
-    'asin': ASIN,
-    'customer_zipcode': '80602',
-    'output': 'json',
-    'include_html': 'false'
-    }
+import tkinter as tk
+from tkinter import filedialog
 
 
 
-    # make the http GET request to Rainforest API
-    api_result = requests.get('https://api.rainforestapi.com/request', params)
 
 
-    # Store the JSON response from Rainforest API
-    data = json.dumps(api_result.json())
-    #print(data)
-
-    #Find the first instance of "value" in the JSON response to get the price
-    index_of_value = data.find("value")
-    #print(index_of_value)
-    #print(data[index_of_value:index_of_value+15])
 
 
-    price = ""
 
-    # Traverse each character of the string from index of "value" and the following 15 characters including full price
-    for x in data[index_of_value:index_of_value+15]:
-        # find the numbers from the string and store into a variable to return final price
-        if x.isnumeric() or x ==".":
-            price += x
+Price = 0
 
 
-    print(f"ASIN: {ASIN}\nIndex of 'value': {index_of_value}\n15 Character string including price: {data[index_of_value:index_of_value+15]}\nPrice: {price}\n\n")
-    return float(price)
 
+
+
+
+
+
+# Initialize Tkninter Window
+App = tk.Tk()
+
+#Name Window
+App.title("Total Donation Count")
+
+# Set the window size
+App.geometry("440x300")
+
+# Prevent resizing
+App.resizable(False, False)
+
+# Title
+Title = tk.Label(App, text="AD12 Inventory Price Calculator", font=("Arial", 20, "bold"))
+Title.pack(anchor="center")
+
+
+#Blank Space for spacing
+Title = tk.Label(App, text="", font=("Arial", 100, "bold"))
+Title.pack()
+
+
+
+
+
+def upload_file():
+    file_path = filedialog.askopenfilename()
+    print(file_path)
+
+
+
+    global ASIN 
+    ASIN = reader2.getAsin(file_path)
+    global Quantity
+    Quantity = reader2.getAmount(file_path)
+    global count
+    count = 0
+
+
+
+    Title = tk.Label(App, text=f"{count} of {len(ASIN)}'s found")
+    Title.pack()
+
+    def totalPrice(a, b):
+        totalPrice = 0
+        count = 0
+        for x in range(len(a)):
+            totalPrice += PriceAPI.find(a[x]) * int(b[x])
+            count+=1
+            time.sleep(1)
+
+            
+            
+        return totalPrice
+    
+    totalPrice = totalPrice(ASIN[:2], Quantity[:2])
+
+    Price = totalPrice
+
+
+
+#Create and add "Upload File" Button
+button = tk.Button(App, text="Upload File", command=upload_file)
+button.pack()
+
+
+
+lbl = tk.Label(App, text=f"Total Inventory Price: ${Price}")
+lbl.pack()
+
+App.mainloop()
 
 
     
 
-totalPrice = 0
 
-for x in range(20):
-
-    totalPrice += find(ASIN[x])
-    time.sleep(1)
-
-
-
-print(totalPrice)

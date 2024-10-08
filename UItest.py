@@ -1,11 +1,12 @@
 import tkinter as tk
 from tkinter import filedialog
-from asin import reader
-x='t'
+
+
+
 def upload_file():
     file_path = filedialog.askopenfilename()
     if file_path:
-        x=reader.getAmount(file_path)
+        x="total price"
         lbl = tk.Label(DonApp, text=x)
         lbl.grid()
 
