@@ -2,16 +2,17 @@ import requests
 import json
 
 
+errorList = []
 
 def find(ASIN):
 
 # API Parameters using individual ASIN #'s
     params = {
-    'api_key': '59E6E09CB64F45719F983ED62F73FE9B',
+    'api_key': '3555BB7FA8A44C258862D328F307A3E8',
     'type': 'offers',
     'amazon_domain': 'amazon.com',
     'asin': ASIN,
-    'customer_zipcode': '80602',
+    #'customer_zipcode': '80602',
     'output': 'json',
     'include_html': 'false'
     }
@@ -24,7 +25,7 @@ def find(ASIN):
 
     # Store the JSON response from Rainforest API
     data = json.dumps(api_result.json())
-    #print(data)
+    print(data)
 
     #Find the first instance of "value" in the JSON response to get the price
     index_of_value = data.find("value")
@@ -42,9 +43,16 @@ def find(ASIN):
 
 
     print(f"ASIN: {ASIN}\nIndex of 'value': {index_of_value}\n15 Character string including price: {data[index_of_value:index_of_value+15]}\nPrice: {price}\n\n")
-    return float(price)
+
+    if price.isnumeric():
+        return float(price)
+    else:
+        errorList.append(ASIN)
+        return 0
 
 
+def getErrorList():
+    return errorList
 
 
-
+find("B00000J0S3")
