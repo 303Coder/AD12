@@ -138,7 +138,8 @@ def prices():
 
         file = open("Data.txt", "w")
         file.write(f"{ASIN[x]} \t {currentPrice} \t {Quantity[x]}\n")
-
+        
+    file.write(f"Total Price: {Price}")
     file.close()
 
 
