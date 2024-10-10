@@ -6,6 +6,7 @@ import time
 import tkinter as tk
 from tkinter import ttk
 from tkinter import filedialog
+from tkinter.messagebox import showerror
 
 
 
@@ -33,6 +34,11 @@ Title.pack(anchor="center")
 #Blank Space for spacing
 blankSpace = tk.Label(App, text="", font=("Arial", 30, "bold"))
 blankSpace.pack()
+
+API_Key = ""
+API_Key_Entry = tk.Entry(App, textvariable=API_Key)
+API_Key_Entry.insert(0, "Your API key here")
+API_Key_Entry.pack()
 
 
 
@@ -68,35 +74,28 @@ Quantity = []
 
 
 
-def prices():
-    # Count variable for # of ASINs found 
-    global count
-    count = 0
-
-    global Price
-    Price = 0
-
-    lbl3.config(text=f"{count} of {len(ASIN)} ASIN's found")
 
 
+        
+        
 
-    for x in range(len(ASIN)):
-        currentPrice = PriceAPI.find(ASIN[x]) * int(Quantity[x]) 
-        Price += currentPrice
-        count+=1
-        lbl3.config(text=f"{count} of {len(ASIN)} ASIN's found")
-        lbl4.config(text=f"Total Inventory Price: ${Price}")
-        time.sleep(1)
+def upload_file():
+    if API_Key_Entry.get() == "":
+        showerror("API Input", "Please enter your API Key")
+        return
+    #Open and sets file path to variable
+    global file_path
+    file_path = filedialog.askopenfilename()
 
-        file = open("Data.txt", "w")
-        file.write(f"{ASIN[x]} \t {currentPrice} \t {Quantity[x]}\n")
 
+    global API_Key
+    API_Key = API_Key_Entry.get()
+
+    lbl1.config(text=f"File: '{file_path}'")
+
+    file = open("Data.txt", "w")
+    file.write("ASIN \t Price \t Quantity\n")
     file.close()
-
-        
-        
-
-
 
 
 
@@ -117,16 +116,30 @@ def lists():
 
 
 
-def upload_file():
-    #Open and sets file path to variable
-    global file_path
-    file_path = filedialog.askopenfilename()
-    #print(file_path)
+def prices():
+    # Count variable for # of ASINs found 
+    global count
+    count = 0
 
-    lbl1.config(text=f"File: '{file_path}'")
+    global Price
+    Price = 0
 
-    file = open("Data.txt", "w")
-    file.write("ASIN \t Price \t Quantity\n")
+    lbl3.config(text=f"{count} of {len(ASIN)} ASIN's found")
+
+
+
+    for x in range(len(ASIN)):
+        currentPrice = PriceAPI.find(API_Key, ASIN[x]) * int(Quantity[x]) 
+        Price += currentPrice
+        count+=1
+        lbl3.config(text=f"{count} of {len(ASIN)} ASIN's found")
+        lbl4.config(text=f"Total Inventory Price: ${Price}")
+        time.sleep(1)
+
+        file = open("Data.txt", "w")
+        file.write(f"{ASIN[x]} \t {currentPrice} \t {Quantity[x]}\n")
+
+    file.close()
 
 
 
@@ -136,8 +149,6 @@ def upload_file():
 def main():
     upload_file()
     lists()
-    print(ASIN)
-    print(Quantity)
     prices()
 
             

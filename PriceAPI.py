@@ -4,11 +4,11 @@ import json
 
 errorList = []
 
-def find(ASIN):
+def find(API_Key, ASIN):
 
 # API Parameters using individual ASIN #'s
     params = {
-    'api_key': '3555BB7FA8A44C258862D328F307A3E8',
+    'api_key': API_Key,
     'type': 'offers',
     'amazon_domain': 'amazon.com',
     'asin': ASIN,
@@ -53,6 +53,3 @@ def find(ASIN):
 
 def getErrorList():
     return errorList
-
-
-find("B00000J0S3")
